@@ -4,13 +4,22 @@ The workshop makes use of a three-node Apache Kafka Cluster that relies on Zooke
 
 Some of the labs in this workshop use Node (JS) applications. It is therefore required to also have a Node runtime environment.
 
+
+* [Prepare Docker Compose](#prepare-docker-compose)
+
+* [Run Docker Compose to Create Apache Kafka Platform](#Run-Docker-Compose-to-Create-Apache-Kafka-Platform)
+
+* [Verify Success of Running Kafka Platform](#Verify-Success-of-Running-Platform)
+
+* [Node and NPM Runtime](#Node-Runtime)
+
 ## Preparing Docker Compose 
 Docker Compose is a tool for defining and running multi-container Docker applications such as the Apache Kafka Platform we use in this workshop. With Compose, you use a YAML file to configure your application's services - the *docker-compose.yml* file in this directory. Then, with a single command, you create and start all the services from your configuration. Docker Compose relies on Docker Engine for any meaningful work, so make sure you have Docker Engine installed either locally or remote, depending on your setup.
 
-### Run Docker Compose locally 
+### Docker Compose locally 
  Details on installing Docker Compose and Docker locally can be found [here](https://docs.docker.com/compose/install/). Note that Docker Compose is included with Docker Desktop for Windows. 
 
-### Run Docker Compose in a VM
+### Docker Compose in a VM
 To keep your environment *clean* - you may choose to run the workshop (largely) inside a VM. That is how this workshop was prepared as well.
 
 A nice way to quickly construct a VM with Docker and Docker Compose inside is through the use of two tools:
@@ -49,7 +58,7 @@ Run this command on the command line in the directory that contains the *docker-
 
 `docker-compose up -d`
 
-## Verify Success
+## Verify Success of Running Platform
 
 When all images have been pulled and Docker Compose indicates that alle configured containers have been created, you can check on the Docker host if all containers are indeed running:
 

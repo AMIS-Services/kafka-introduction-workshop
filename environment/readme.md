@@ -2,10 +2,16 @@
 
 The workshop makes use of a three-node Apache Kafka Cluster that relies on Zookeeper for bookkeeping across the cluster nodes also known as brokers. In addition to this cluster, Kafka Manager and Kafka HQ are used - two tools that support observing and managing the Kafka Cluster. Six Docker Containers will run these components and Docker Compose is used to coordinate these containers. Your lab-environment needs to be able to run Docker Compose - inside a VM or on your local OS. 
 
-Some of the labs in this workshop use Node (JS) applications. It is therefore required to also have a Node runtime environment.
+Some of the labs in this workshop use Node (JS) applications. It is therefore required to also have a Node runtime environment. Optionally you can make use of Java applications to interact with your Kafka Cluster; for this you will need a Java Runtime Environment.
+
+The environment you will work in can be visualized like this:
+
+![](resources/kafka-lab-environment.png)
+
+Note the numbers shown on each of the containers: these are the ports on which the applications in the containers are exposed on the Docker Host machine.
 
 
-* [Prepare Docker Compose](#prepare-docker-compose)
+* [Prepare Docker Compose](#preparing-docker-compose)
 
 * [Run Docker Compose to Create Apache Kafka Platform](#Run-Docker-Compose-to-Create-Apache-Kafka-Platform)
 

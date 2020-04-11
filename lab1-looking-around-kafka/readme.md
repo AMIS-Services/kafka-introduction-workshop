@@ -54,7 +54,7 @@ First, let's list the topics available on your Kafka Cluster. For that we use th
 kafka-topics --list --zookeeper zookeeper-1:2181
 ```
 
-We can see that there are some technical topics, `_schemas` being the one, where the Confluent Schema Registry stores its schemas. 
+We can see that there are no topics yet, apart from an internal (__confluent) topic.  
 
 ### Creating a topic in Kafka
 
@@ -82,7 +82,7 @@ You can use the `--describe` option to get details on a specific topic, such as 
 ```
 kafka-topics --describe --zookeeper zookeeper-1:2181 --topic test-topic
 ```
-
+The output will look similar to this one - but will most likely not be exactly the same because the distribution of partitions over brokers is dynamic.
 ```
 Topic:test-topic	PartitionCount:6	ReplicationFactor:2	Configs:
 	Topic: test-topic	Partition: 0	Leader: 3	Replicas: 3,2	Isr: 3,2
@@ -146,7 +146,12 @@ You may see that they don't arrive in the same order as produced (if you are ent
 
 You can stop the consumer by hitting **Ctrl-C**. If you want to consume from the beginning of the log, use the `--from-beginning` option.
 
-You can also echo a longer message and pipe it into the console producer, as he is reading the next message from the command line:
+```
+kafka-console-consumer --bootstrap-server kafka-1:9092,kafka-2:9093 \
+							--topic test-topic \
+							--from-beginning
+```
+You can also echo a longer message and pipe it into the console producer, as it is reading the next message from the command line:
 
 ```
 echo "This is my first message!" | kafka-console-producer \
@@ -166,7 +171,7 @@ do
 done 
 ```
 
-By ending the command in the loop with an & character, we run each command in the background and in parallel. 
+By ending the command in the loop with an & character, we run each command in the background and all loop iterations therefore in parallel. 
 
 If you check the consumer, you can see that the messages are not received in the same order as they were sent, because of the different partitions, and the messages being published in multiple partitions. We can force order by using a key when publishing the messages and always using the same value for the key; the consequence of using the same key for these messages is that all messages are assigned to same partition. Messages are strictly ordered within partitions - but not across partitions. 
 
@@ -174,7 +179,7 @@ If you check the consumer, you can see that the messages are not received in the
 
 A message produced to Kafka always consists of a *key* and a *value*. The *value* is mandatory and represents the message/event's *payload*. If a *key* is not specified, such as we did so far, then it is passed as a null value and Kafka distributes such key-less messages in a round-robin fashion over the different partitions. 
 
-We can check that by re-consuming the messages we have created so far, specifying the option `--from-beginning` together with the option `print.key` and `key.separator` in the console consumer. For that stop the still running consumer (`ctrl+C`)and restart it again using the following command - note the `from-beginning` switch that instructs the consumer to read all messages on the topic - not just the new ones but including and starting with the full message history. This is one of the distinguishing features that Apache Kafka introduced to the world of messaging: the message queue is long lived instead of very volatile (read once).
+We can check that by re-consuming the messages we have created so far, specifying the option `--from-beginning` together with the option `print.key` and `key.separator` in the console consumer. For that stop the still running consumer (`ctrl+C`)and restart it again using the following command. Note the `from-beginning` switch that instructs the consumer to read all messages on the topic - not just the new ones but including and starting with the full message history. This is one of the distinguishing features that Apache Kafka introduced to the world of messaging: the message queue is long lived instead of very volatile (read once).
 
 ```
 kafka-console-consumer --bootstrap-server kafka-1:9092,kafka-2:9093 \
@@ -201,3 +206,37 @@ Enter your messages so that a key and messages are separated by a comma, i.e. `k
 ## Using Apache Kafka HQ
 
 [Apache Kafka HQ](https://akhq.io/) is an open source tool for managing a Kafka cluster: a GUI for Apache Kafka® to manage topics, topics data, consumers group, schema registry, connect and more...It has been started as part of the **Kafka platform ** and can be reached on <http://kafka:28042/> (provided you added the IP address to the *hosts* file associated with the host name *kafka*).
+
+The first page in AKHQ shows an overview of the cluster and its nodes. Note: the connection from AKHQ to the Kafka platform is defined in docker-compose.yml, that is where the name for the cluster ("docker-kafka-server") stems from.
+![AKQH Nodes in Cluster](./images/akhq-nodes-1.png) 
+You can inspect the details for each node - through the looking glass icon or just by clicking on the row for the node. This reveals the configuration settings for the node as well as an overview of the logs managed on the node/by the broker.
+![AKQH Node Details](./images/akhq-nodes-2.png) 
+
+The Topics page shows the topics currently created on the entire Kafka Cluster. You will see the *test-topic* that you have just created through the Kafka Console utility. If you show all topics, you will also see two internal topics, used by Kafka for housekeeping. The *__consumer_offsets* topic keeps track of the *read offset* for all consumers (or rather: for all consumer groups).
+
+![AKQH Node Details](./images/akhq-topics-1.png) 
+
+You can see the number of messages on the *test-topic* as well as the number of partitions and the replication factor. You can downdrill on the topic, to level of the actual messages in the message log:
+![AKQH Node Details](./images/akhq-topics-2.png)
+You should see the messages that you have just been producing through the Kafka Console. You can see the message's production time and offset, their size, key and contents and the partition to which they have been assigned. You cannot change any of these properties - the message log is immutable.
+
+### Produce a message
+Click on the button *Produce to Topic*. A window opens where you can define the message to produce. You only need to enter a message text. Then press Produce.
+![AKQH Node Details](./images/akhq-produce-1.png)
+
+You will see an indication that the message has been produced to the topic. 
+![AKQH Node Details](./images/akhq-produce-2.png)
+
+Now check in the Kafka Console terminal window where the Kafka Consumer is running. You will see your own message, produced from the AKHQ application to the *test-topic*. Note: this Kafka Console Consumer session has been associated with an auto-generated Consumer Group (console-consumer-<generated number>). When you stop and start the console consumer, you will continue to consume from the previous offset reached in the console - unless you specify the *from-beginning* switch. 
+
+The message is also visible in AKHQ if you inspect the details for the *test-topic*. Note: the message may not have the highest offset of them all. The offset is defined per partition - so the offset value for your message depends on the previous offset in the specific partition selected by the Kafka Cluster for the message.
+![AKQH Node Details](./images/akhq-produce-3.png)
+
+When you produce a message in the Kafka Console, that message will of course show up in the GUI of AKHQ as well.
+
+
+
+
+
+
+

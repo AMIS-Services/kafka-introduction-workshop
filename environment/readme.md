@@ -83,6 +83,15 @@ Note: you could consider adding an entry to local */etc/hosts* or *C:\Windows\Sy
 
 Note: replace the IP address with the IP address of your Docker Host; this could be 127.0.0.1 if you run on MacOS or a Linux computer. It is the same value you used when setting the PUBLIC_IP environment variable. 
 
+You can now stop the Kafka Platform using this command:
+Run this command on the command line in the directory that contains the *docker-compose.yml* file.
+
+`docker-compose stop`
+
+If you want to not only stop but also remove all containers that docker-compose is running, you may use:
+`docker-compose down`
+
+When you run `docker-compose up` again, all containers will be recreated an started. This time this will happen much faster than the first time because all container images have already been pulled to your local Docker environment.
 
 ## Node Runtime
 Some of the labs will use Node (JS) applications that will consume from and produce to Kafka Topics. These applications are used to demonstrate asynchronous interaction between microservices and an implementation of the CQRS pattern. To run these applications, you need to have a local Node Runtime environment.

@@ -12,12 +12,16 @@ const kafkaConf = {
 
 const topics = [externalConfig.KAFKA_TOPIC];
 
-var stream = new Kafka.KafkaConsumer.createReadStream(kafkaConf, { "auto.offset.reset": "earliest" }, {
+const stream = new Kafka.KafkaConsumer.createReadStream(kafkaConf, { "auto.offset.reset": "earliest" }, {
     topics: topics
 });
 
+let messages = []
+
 stream.on('data', function (message) {
     console.log(`Consumed message on Stream: ${message.value.toString()}`);
+    // add new messages at the top of the array
+    messages.unshift(message.value.toString())
     // the structure of the messages is as follows:
     //   {
     //     value: Buffer.from('hi'), // message contents as a Buffer
@@ -36,8 +40,7 @@ stream.consumer.on("disconnected", function (arg) {
     console.log(`The stream consumer has been disconnected`)
     process.exit();
 });
-
-// automatically disconnect the consumer after 30 seconds
-setTimeout(function () {
-    stream.consumer.disconnect();
-}, 30000)
+const getMessages = function() {
+    return messages
+}
+module.exports = {  getMessages };

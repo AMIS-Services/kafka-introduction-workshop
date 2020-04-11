@@ -2,7 +2,7 @@ const http = require('http')
 const url = require('url')
 const PORT = 3000
 
-// create an HTTP server that handles HTTP requests; it is handed to parameters: the request and response objects
+// create an HTTP server that handles HTTP requests; it is handed two parameters: the request and response objects
 const server = http.createServer((req, res) => {
     if (req.method === 'GET') {
         // get all query parameters from the URL

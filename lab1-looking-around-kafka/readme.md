@@ -220,6 +220,8 @@ You can see the number of messages on the *test-topic* as well as the number of 
 ![AKQH Node Details](./images/akhq-topics-2.png)
 You should see the messages that you have just been producing through the Kafka Console. You can see the message's production time and offset, their size, key and contents and the partition to which they have been assigned. You cannot change any of these properties - the message log is immutable.
 
+Other tabs in AKHQ for the topic provide access to the partitions (and their current offset), Consumer Groups consuming from the topic, the configuration, ACLs (Access Control Lists) and the message logs themselves. 
+
 ### Produce a message
 Click on the button *Produce to Topic*. A window opens where you can define the message to produce. You only need to enter a message text. Then press Produce.
 ![AKQH Node Details](./images/akhq-produce-1.png)

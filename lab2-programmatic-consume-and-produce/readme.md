@@ -160,16 +160,45 @@ On the Topic page, you can produce a message to the *test-topic*. This message w
 
 
 ## Bonus: Node Web Application
-From the previous step it is but a small additional step to allow users to enter messages into a Web User Interface and send them for publication to a Kafka Topic. This section shows such a (very simple) web application in Node. 
+From the previous step it is but a small additional step to allow users to enter messages into a Web User Interface and send them for publication to a Kafka Topic. The first section shows such a (very simple) web application in Node, that allows you to send messages as query parameter in an HTTP GET request, for example by entering a URL in the location bar of your browser. 
 
-The next section does something similar on the consuming end: publish a web application that makes the messages visible that have been consumed from the Kafka topic.
+The next section does something similar on the consuming end: publish a web application that makes the messages visible that have been consumed from the Kafka topic. To set the expectations at the right level: the response to an HTTP Request will be a JSON document with all messages received by the consumer. A more fancy UI is left as an exercise to the reader ;)
  
-### Custom Node Web Application for Producing Messages
+### Node Web Application for Producing Messages
+Earlier in this lab we looked at a very simple Node web application: *hello-world-web*. Now we combine that web application with the Kafka Producer we worked on just before. Look in directory  lab2-programmatic-consume-and-produce\node-kafka-web-client and open file *web-producer.js*.
+
+This Node application starts an HTTP Server to handle GET requests. It uses a query parameter called *message* for the content of the message to publish to the Kafka Topic. A module referenced as *./produce* is *required* into the *web-producer.js*. This is interpreted by the Node runtime as: find a local file *produce.js*, load it and make available as public objects anything in *module.exports*. The file *produce.js* is largely the same as before, only this time it does not automatically start generating and publishing messages and it has a function called *produceMessage* that produces one message to the KAFKA_TOPIC. This function is exported in *module.exports* and as such available in *web-producer.js*. Note: *producer.js* imports *config.js* - the file with the KAFKA Broker endpoints.  
+
+Before you can run the application, you need to bring in the dependencies. From the command line in the directory that contains file *package.json* run:
+```
+npm install
+```
+to download all required NPM modules into the directory node-modules.
+
+Now you can run the web application:
+```
+node web-producer.js
+```
+The HTTP server is started and listens on port 3001. You can send GET requests to this port that have a query parameter called *message*. Whatever value *message* has is used as the content of a message published to the Kafka Topic *test-topic*.
+
+From a browser - or from the command line using tools such as *curl* or *wget* - make a GET request such as this one: [http://localhost:3001?message=My+Message+is+Hello+World](http://localhost:3001?message=My+Message+is+Hello+World).
+
+You can check in Apache Kafka HQ or in the Kafka Console Consumer if the message arrives. Or go to the next section for the consuming web application in Node.
+
 
 ### Node Web Application for Consuming Messages
 
+The consuming web application is very similar in structure to the producer we just discussed. The file *web-consumer.js* starts an HTTP Server that handles HTTP GET Requests. It will return a JSON document with whatever value is returned by the function *consumer.getMessages*. This function is loaded from module *./consume* and exported in *consume.js* in *module.exports*. 
 
+Check the contents of *consume.js*: it should look familiar. New compared to the earlier implementation of *consume.js* is the *messages* array in which all messages consumed from the Kafka Topic are collected - the latest at the top or beginning of the array. The *on data* handler on the stream adds the message contents to this array and the function *getMessages* returns the array. This function is exported for the benefit of external consumers in *module.exports*. 
 
+Run the web application:
+```
+node web-consumer.js
+```
+The HTTP server is started and listens on port 3002. You can send GET requests to this port to get a JSON document with all messages consumed from Kafka Topic *test-topic*: [http://localhost:3002](http://localhost:3002).
 
+If you keep both web producer and web consumer running at the same time, you can see the effect of one in the other.
 
-
+Publish another message: 
+[http://localhost:3001?message=A+brand+new+message](http://localhost:3001?message=A+brand+new+message).

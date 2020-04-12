@@ -1,7 +1,7 @@
 const Kafka = require("node-rdkafka"); // see: https://github.com/blizzard/node-rdkafka
 const externalConfig = require('./config').config;
 
-const CONSUMER_GROUP_ID = "node-consumer-one"
+const CONSUMER_GROUP_ID = "node-web-consumer"
 
 const kafkaConf = {
     "group.id": CONSUMER_GROUP_ID,

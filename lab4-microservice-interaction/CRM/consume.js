@@ -1,10 +1,10 @@
 const Kafka = require("node-rdkafka"); // see: https://github.com/blizzard/node-rdkafka
 const externalConfig = require('./config').config;
 
-const CONSUMER_GROUP_ID = "customer-service"+new Date().getTime()
+const CONSUMER_GROUP_ID = "customer-service" // uncomment to always read all messages from the top +new Date().getTime()
 
 const kafkaConf = {
-     "group.id": CONSUMER_GROUP_ID, 
+    "group.id": CONSUMER_GROUP_ID,
     "metadata.broker.list": externalConfig.KAFKA_BROKERS,
     "socket.keepalive.enable": true,
     "debug": "generic,broker,security"

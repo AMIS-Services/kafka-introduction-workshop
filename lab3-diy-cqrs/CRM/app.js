@@ -1,6 +1,7 @@
 const http = require('http')
 const url = require('url')
-const producer = require('./produce')
+// ... insert module for Kafka event production
+
 const importer = require('./customerImporter')
 const PORT = 3005
 

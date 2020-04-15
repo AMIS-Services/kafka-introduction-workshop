@@ -12,8 +12,8 @@ The steps for implementing this scenario:
 * extend the CRM Service with the a feature to listen to the questions-topic, process a request and produce an answer
 
 ## Create Three Kafka Topics
-
-create three Kafka Topics: workflow-queue, questions-topic and answers-topic
+Create three Kafka Topics: workflow-queue, questions-topic and answers-topic
+![](images/kafka-topics.png)
 
 Like you did in Labs 1 and 3, open a terminal window on the Docker Host and run a `docker exec` command to start a shell in the `kafka-1` docker container (or use Apache Kafka HQ to create the topics from the GUI)
 
@@ -60,6 +60,7 @@ The Billing Run Coordinator is a simple Node application that exposes a REST API
 }
 ```
 The `workflow-type` specifies the type of workflow to be executed. The payload element contains whatever payload is relevant for the type of workflow. In this case, it contains the customer identifier.
+![](images/billing-run.png)
 
 Check out the file *app.js* in directory *lab4-microservice-interaction\billing-run-coordinator*. The code should look somewhat familiar by now:
 * HTTP Server listening at port 3007
@@ -87,6 +88,7 @@ At this point, no bill is generated yet. No bill is in the process of being gene
 
 ## Billing Engine Microservice - Workflow Step Execution Engine
 The Billing Engine microservice will do the work of generating bills. It consumes bill-generation instructions in the form of messages from the workflow-queue, requests some customer details from the CRM Service - albeit in a very decoupled manner - and generates a bill in a local file.
+![](images/billing-engine.png)
 
 There are some things diffent about this microservice. For starters, it does not expose REST API. The only interactions this service has are through Kafka Topics (consuming from two of them, producing to one topic) and the file system (generating bills to the local file system).
 
@@ -117,6 +119,7 @@ The bills not actually get generated yet: the *billing engine* requires informat
 
 ## CRM Microservice - Asynchronous Answering Machine
 The *CRM microservice* in directory *lab4-microservice-interaction\CRM* is quite similar to the CRM service we worked with in *lab3*. However, it does not produce messages to the *connection-mandates-topic*. And it has been extended to listen for questions regarding customers on the *questions-topic* and to produce answers to such indirect requests to the *answers-topic*. 
+![](images/crm.png)
 
 File *app.js* - the main module in the application imports two modules: *producer* and *consumer*. These are quiet familiar by now - utility modules for producing to and consuming from Kafka topics. They leverage the Kafka configuration in *config.js* - the file you have seen before in these labs.
 
@@ -142,6 +145,7 @@ This in turn will bring the *Billing Engine* back to life: it consumes the answe
 
 ## Trigger the Billing Run Workflow
 With all services up and running, let's put all pieces together in one smooth end to end flow. 
+![](images/all-pieces.png)
 
 Make a request to the Billing Run Coordinator for two customers. 
 ```

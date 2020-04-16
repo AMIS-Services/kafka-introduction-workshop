@@ -237,7 +237,8 @@ The message is also visible in AKHQ if you inspect the details for the *test-top
 When you produce a message in the Kafka Console, that message will of course show up in the GUI of AKHQ as well.
 
 
-
+# Resources
+A nice introductory article on Apache Kafka: [Part 1: Apache Kafka for beginners - What is Apache Kafka?](https://www.cloudkarafka.com/blog/2016-11-30-part1-kafka-for-beginners-what-is-apache-kafka.html)
 
 
 

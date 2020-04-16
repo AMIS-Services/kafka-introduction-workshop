@@ -35,6 +35,11 @@ A nice way to quickly construct a VM with Docker and Docker Compose inside is th
 The steps for creating a VM that will run the workshop are straightforward:
 1. install Oracle Virtualbox on your laptop
 2. install Vagrant on your laptop
+   * two plugins for Vagrant need to be installed as well, with the following two commands:
+   ```
+   vagrant plugin install vagrant-disksize
+   vagrant plugin install vagrant-docker-compose
+   ```
 3. inspect the file *Vagrantfile* located in the current directory; this file contains the definition of the VM: an Ubutunu Linux environment with 8GB of RAM and 25GB of Diskspace, a fixed IP address and Docker and Docker Compose pre installed. Note: the Vagrantfile defines an IP address for the VM; this is the address at which the VM is accessible from the Host machine (your laptop on which the VM is running). You can change the IP address to another value if for example this address is already occupied
 4. open a command line window in the current directory (that contains the file *Vagrantfile*); 
 5. execute `vagrant up` in the command window. Vagrant will now work together with VirtualBox to construct the VM; this can take quite some time (5-15 minutes), depending primarily on your download speed.

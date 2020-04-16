@@ -46,7 +46,7 @@ The steps for creating a VM that will run the workshop are straightforward:
 6. once *Vagrant* indicates it is done, a VM is running on your local machine - ready for some action. You could inspect the Oracle VirtualBox Client to see details on the newly created VM.
 7. try to ping the VM `ping 192.168.188.110` (or the IP address you defined in the *Vagrantfile*)
 8. on the command line, type `vagrant ssh`. This should open a terminal session into the VM. Type `docker ps` to verify if Docker has been installed (and that no containers are currently running)
-9. execute the following command to get a local copy of the GitHub Repo for this workshop: `git clone https://github.com/AMIS-Services/kafka-introduction-workshop`. 
+9. execute the following command to get a local copy of the GitHub Repo for this workshop: `git clone https://github.com/AMIS-Services/online-meetups-introduction-of-kafka`. 
 
 Change the directory to `kafka-introduction-workshop/environment` and type `ls`. You should see a listing of files that includes *Vagrantfile*, this *readme.md* file and *docker-compose.yml*.  
 

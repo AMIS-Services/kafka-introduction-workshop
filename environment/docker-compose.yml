@@ -1,6 +1,7 @@
 # based on https://github.com/gschmutz/stream-processing-workshop/blob/master/01-environment/docker/docker-compose.yml
 # does not include: Connect, Schema Registry, KSQL
-# does include Kafka Manager and Kafka HQ (https://akhq.io/)
+# does include KafkaCat (https://docs.confluent.io/platform/current/app-development/kafkacat-usage.html and https://docs.confluent.io/platform/current/tutorials/examples/clients/docs/kafkacat.html#client-examples-kafkacat) 
+# and Kafka HQ (https://akhq.io/) available at http://localhost:28042
 # relies on environment variable PUBLIC_IP 
 # Prepare Environment Variables
 # set PUBLIC_IP to the IP address on which the local host machine connects to the Docker host
@@ -9,13 +10,18 @@
 
 # =====================================================
 # Platform: default
+# Platform Stack:          derived from trivadis/platys-modern-data-platform
+# Platform Stack Version:  derived from 1.10.0
 # =====================================================
-version: '3.0'
+version: '3.5'
 # enforce some dependencies
+networks:
+  default:
+    name: streaming-platform
 services:
   #  ================================== Zookeeper ========================================== #}
   zookeeper-1:
-    image: confluentinc/cp-zookeeper:5.4.0
+    image: confluentinc/cp-zookeeper:6.0.1
     container_name: zookeeper-1
     hostname: zookeeper-1
     ports:
@@ -29,7 +35,7 @@ services:
     restart: unless-stopped
   #  ================================== Kafka ========================================== #}
   kafka-1:
-    image: confluentinc/cp-kafka:5.4.0
+    image: confluentinc/cp-kafka:6.0.1
     container_name: kafka-1
     hostname: kafka-1
     depends_on:
@@ -37,6 +43,7 @@ services:
     ports:
       - 9092:9092
       - 29092:29092
+      - 9992:9992
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_BROKER_RACK: r1
@@ -46,15 +53,21 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_INTERNAL:PLAINTEXT,LISTENER_DOCKERHOST:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_DELETE_TOPIC_ENABLE: 'False'
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_MESSAGE_TIMESTAMP_TYPE: CreateTime
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_DELETE_TOPIC_ENABLE: 'True'
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'False'
-      KAFKA_JMX_PORT: 9094
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9094
-      KAFKA_JMX_HOSTNAME: kafka-1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      KAFKA_JMX_PORT: 9992
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9992
+      KAFKA_JMX_HOSTNAME: ${PUBLIC_IP:-127.0.0.1}
+    volumes:
+      - ./data-transfer:/data-transfer
     restart: unless-stopped
   kafka-2:
-    image: confluentinc/cp-kafka:5.4.0
+    image: confluentinc/cp-kafka:6.0.1
     container_name: kafka-2
     hostname: kafka-2
     depends_on:
@@ -62,6 +75,7 @@ services:
     ports:
       - 9093:9093
       - 29093:29093
+      - 9993:9993
     environment:
       KAFKA_BROKER_ID: 2
       KAFKA_BROKER_RACK: r2
@@ -71,15 +85,21 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_INTERNAL:PLAINTEXT,LISTENER_DOCKERHOST:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_DELETE_TOPIC_ENABLE: 'False'
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_MESSAGE_TIMESTAMP_TYPE: CreateTime
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_DELETE_TOPIC_ENABLE: 'True'
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'False'
-      KAFKA_JMX_PORT: 9095
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9095
-      KAFKA_JMX_HOSTNAME: kafka-2
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      KAFKA_JMX_PORT: 9993
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9993
+      KAFKA_JMX_HOSTNAME: ${PUBLIC_IP:-127.0.0.1}
+    volumes:
+      - ./data-transfer:/data-transfer
     restart: unless-stopped
   kafka-3:
-    image: confluentinc/cp-kafka:5.4.0
+    image: confluentinc/cp-kafka:6.0.1
     container_name: kafka-3
     hostname: kafka-3
     depends_on:
@@ -87,6 +107,7 @@ services:
     ports:
       - 9094:9094
       - 29094:29094
+      - 9994:9994
     environment:
       KAFKA_BROKER_ID: 3
       KAFKA_BROKER_RACK: r3
@@ -96,12 +117,18 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_INTERNAL:PLAINTEXT,LISTENER_DOCKERHOST:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_DELETE_TOPIC_ENABLE: 'False'
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_MESSAGE_TIMESTAMP_TYPE: CreateTime
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_DELETE_TOPIC_ENABLE: 'True'
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'False'
-      KAFKA_JMX_PORT: 9096
-      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9096
-      KAFKA_JMX_HOSTNAME: kafka-3
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+      KAFKA_JMX_PORT: 9994
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9994
+      KAFKA_JMX_HOSTNAME: ${PUBLIC_IP:-127.0.0.1}
+    volumes:
+      - ./data-transfer:/data-transfer
     restart: unless-stopped
   kafka-manager:
     image: trivadis/kafka-manager:latest
@@ -118,25 +145,46 @@ services:
       ZK_HOSTS: zookeeper-1:2181
       APPLICATION_SECRET: abc123!
     restart: unless-stopped
-  kafkahq:
-    image: tchiotludo/kafkahq:latest
-    container_name: kafkahq
-    hostname: kafkahq
+  #  ================================== Kafkacat  ========================================== #
+  kafkacat:
+    image: edenhill/kafkacat:1.6.0
+    container_name: kafkacat
+    hostname: kafkacat
+    volumes:
+      - ./data-transfer:/data-transfer
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        apk add jq;
+        while [ 1 -eq 1 ];do sleep 60;done
+    restart: unless-stopped
+  #  ================================== Apache Kafka HQ (AKHQ) ========================================== #
+  akhq:
+    image: tchiotludo/akhq:latest
+    container_name: akhq
+    hostname: akhq
     labels:
-      com.mdps.service.webui.url: http://${PUBLIC_IP}:28042
+      com.platys.webui.title: Apache Kafka AQ UI
+      com.platys.webui.url: http://${PUBLIC_IP}:28042
     ports:
       - 28042:8080
     environment:
-      KAFKAHQ_CONFIGURATION: |
-        kafkahq:
+      AKHQ_CONFIGURATION: |
+        akhq:
           connections:
             docker-kafka-server:
               properties:
-                bootstrap.servers: "kafka-1:19092"
-              schema-registry:
-                url: "http://schema-registry-1:8081"
-              connect:
-                url: "http://kafka-connect-1:8083"
+                bootstrap.servers: 'kafka-1:19092,kafka-2:19093,kafka-3:19094'
+              # schema-registry:
+              #   url: "http://schema-registry-1:8081"
+              # connect:
+              #   - name: "kafka-connect-1"
+              #     url: "http://kafka-connect-1:8083"
+              #   - name: "kafka-connect-2"
+              #     url: "http://kafka-connect-1:8084"
     depends_on:
       - kafka-1
+    volumes:
+      - ./data-transfer:/data-transfer
     restart: unless-stopped

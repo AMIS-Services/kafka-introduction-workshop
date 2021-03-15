@@ -10,6 +10,8 @@ The environment you will work in can be visualized like this:
 
 Note the numbers shown on each of the containers: these are the ports on which the applications in the containers are exposed on the Docker Host machine.
 
+Note: to very quickly get started with Apache Kafka, you do not even have to install it locally. You can instantiate - for free! - a Kafka Cluster in the CloudKarafka cloud service and configure all programmatic Kafka interaction with that instance instead of with a local instance. Follow the instructions in this blog article [A Free Apache Kafka Cloud Service – and how to quickly get started with it](https://technology.amis.nl/cloud/a-free-apache-kafka-cloud-service-and-how-to-quickly-get-started-with-it/) to get your CloudKarafka instance up and running. (you may abandon the article once you have completed the section *Try out the new Cloud Karafka Ducky Plan Instance* )  
+
 
 * [Prepare Docker Compose](#preparing-docker-compose)
 

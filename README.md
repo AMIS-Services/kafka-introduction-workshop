@@ -1,5 +1,5 @@
 # Kafka Introduction - Presentation and Workshop
-This repository contains resources for the Apache Kafka Introduction Workshop for students of Fontys Hogeschool - April 2020
+This repository contains resources for the Apache Kafka Introduction Workshop for students of Fontys Hogeschool - Spring 2021
 
 Four labs are included:
 * Lab 1: Handson introduction of Apache Kafka: manage topics and publish/consume messages using Kafka Console and Kafka HQ

@@ -23,24 +23,9 @@ docker exec -ti kafka-1 bash
 Use the **kafka-topics** utility with the `--create` option to create the three topics: *workflow-queue*, *questions-topic* and *answers-topic*. Create the topics with a fairly arbitrary configuration with 4 partitions and a replication factor of 2.  
 
 ```
-kafka-topics --create \
-			--if-not-exists \
-			--zookeeper zookeeper-1:2181 \
-			--topic workflow-queue \
-			--partitions 4 \
-			--replication-factor 2
-kafka-topics --create \
-			--if-not-exists \
-			--zookeeper zookeeper-1:2181 \
-			--topic questions-topic \
-			--partitions 4 \
-			--replication-factor 2            
-kafka-topics --create \
-			--if-not-exists \
-			--zookeeper zookeeper-1:2181 \
-			--topic answers-topic \
-			--partitions 4 \
-			--replication-factor 2            
+kafka-topics --create --if-not-exists --zookeeper zookeeper-1:2181 --topic workflow-queue --partitions 4 --replication-factor 2
+kafka-topics --create --if-not-exists --zookeeper zookeeper-1:2181 --topic questions-topic --partitions 4 --replication-factor 2            
+kafka-topics --create --if-not-exists --zookeeper zookeeper-1:2181 --topic answers-topic --partitions 4 --replication-factor 2            
 ```
 Run this command to list the topics.
 

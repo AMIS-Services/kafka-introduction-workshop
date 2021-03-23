@@ -113,9 +113,14 @@ This is as good a time as any to open file *produce.js* again and interpret what
 * generate and produce events (Feel free to change the contents of the generated messages)
 * disconnect the producer
 
-Before you can run the producer application, make sure that the KAFKA_BROKERS configuration in *configure.js* is correct for your environment - and that the KAFKA_TOPIC refers to a topic that already exists on your Kafka Cluster.
+Before you can run the producer application, make sure that the KAFKA_BROKERS configuration in *config.js* is correct for your environment - and that the KAFKA_TOPIC refers to a topic that already exists on your Kafka Cluster.
 
-When these conditions ar met - and `npm install` is done installing the required node modules, it is time to produce some messages to the topic.  
+Note: if you use a Kafka Cluster on the CloudKarafka Cloud Service(see https://technology.amis.nl/cloud/a-free-apache-kafka-cloud-service-and-how-to-quickly-get-started-with-it/ for instructions on how to get going), you can use the file *consumeFromCloudKarafka.js*; you need to specify some of your CloudKarafka's account properties: username, password, server names, topic name.
+
+![](images/cloudkarafka-accountdetails.png)
+
+
+When these conditions are met - and `npm install` is done installing the required node modules, it is time to produce some messages to the topic.  
 
 Run this command:
 ```

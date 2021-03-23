@@ -82,16 +82,16 @@ Resource: [Node documentation on http-module](https://nodejs.org/api/http.html)
 
 ## Node interacting with Apache Kafka
 
-The NPM module repository returns over 550 modules when searched for the keyword *kafka*. Not all of them are libraries to facilitate the interaction from your Node application with Apache Kafka clusters - but over a dozen are. In this lab, we will work with the *node-rdkafka* NPM module, [node-rdkafka on GitHub](https://github.com/Blizzard/node-rdkafka) for details on this particular library and [Reference Docs](https://blizzard.github.io/node-rdkafka/current/) for the API specification. The node-rdkafka library is a high-performance NodeJS client for Apache Kafka that wraps the native (C based) *librdkafka* library. All the complexity of balancing writes across partitions and managing (possibly ever-changing) brokers should be encapsulated in the library.
+The NPM module repository returns over 660 modules when searched for the keyword *kafka*. Not all of them are libraries to facilitate the interaction from your Node application with Apache Kafka clusters - but over a dozen are. In this lab, we will work with the *node-rdkafka* NPM module, [node-rdkafka on GitHub](https://github.com/Blizzard/node-rdkafka) for details on this particular library and [Reference Docs](https://blizzard.github.io/node-rdkafka/current/) for the API specification. The node-rdkafka library is a high-performance NodeJS client for Apache Kafka that wraps the native (C based) *librdkafka* library. All the complexity of balancing writes across partitions and managing (possibly ever-changing) brokers should be encapsulated in the library.
 
-The source for this part of the lab are in the directory *node-kafka-client* in the lab2 directory in the Git repo.
+The sources for this part of the lab are in the directory *node-kafka-client* in the lab2 directory in the Git repo.
 
 ### Producing to test-topic in Node
 
 Take a look at the *package.json* file. You will see a dependency configured on *node-rdkafka*:
 ```
   "dependencies": {
-    "node-rdkafka": "^2.2.0"
+    "node-rdkafka": "^2.10.1"
   }
 ```
 Now look at the file *produce.js*. The first line of this Node application also refers to *node-rdkafka*. When we execute *produce.js*, the Node runtime will try to load the module *node-rdkafka*. It will try to do so by locating a directory called *node-rdkafka* under the directory *node-modules* that lives in the root of the application. At this moment, you probably do not yet have this *node-modules* directory. It gets created when you instruct *npm* to download all libraries on which the application depends - as configured in *package.json*.

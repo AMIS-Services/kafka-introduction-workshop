@@ -77,12 +77,7 @@ docker exec -ti kafka-1 bash
 Now let's create a new topic. For that we use the **kafka-topics** utility with the `--create` option. Create a *connection-mandates-topic* topic with 4 partitions and a replication factor of 2.  
 
 ```
-kafka-topics --create \
-			--if-not-exists \
-			--zookeeper zookeeper-1:2181 \
-			--topic connection-mandates-topic \
-			--partitions 4 \
-			--replication-factor 2
+kafka-topics --create --if-not-exists --zookeeper zookeeper-1:2181 --topic connection-mandates-topic --partitions 4 --replication-factor 2
 ```
 Run this command to list the topics.
 
@@ -105,7 +100,7 @@ Note that the contents of *produce.js* is exactly the same as when we used this 
 
 Now whenever the CRM service registers a completely new customer, it should publish a message to the new *connection-mandates-topic* . And when for and existing customer anything changes in the values of connectionId or connectionMandate, then too should a message be published to the topic. 
 
-The function that process both new and changed customers is function *processCustomer* in *app.js*. It is from this function therefore that the function *producer.produceMessage* is to be invoked with a message payload that looks like this:
+The function that processes both new and changed customers is function *processCustomer* in *app.js*. It is from this function therefore that the function *producer.produceMessage* is to be invoked with a message payload that looks like this:
 ```
 { "connectionId":"4617", "connectionMandate" : "1" }
 ```
@@ -167,7 +162,7 @@ Return to *app.js*. Add the following lines, just below the definition of `const
 ```
 const handleConnectionMandateMessage = function(message) {
     console.log(`Handling ConnectionMandate Message ${message.value.toString()} ` )
-    connectionMandate = JSON.parse(message.value.toString())
+    let connectionMandate = JSON.parse(message.value.toString())
     connectionMandates[connectionMandate.connectionId]=connectionMandate
 }
 ```

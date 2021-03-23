@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-rdkafka": "^2.2.0"
+    "node-rdkafka": "^2.10.1"
   }
 }

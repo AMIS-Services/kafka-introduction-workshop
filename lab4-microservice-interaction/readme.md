@@ -77,7 +77,7 @@ At this point, no bill is generated yet. No bill is in the process of being gene
 The Billing Engine microservice will do the work of generating bills. It consumes bill-generation instructions in the form of messages from the workflow-queue, requests some customer details from the CRM Service - albeit in a very decoupled manner - and generates a bill in a local file.
 ![](images/billing-engine.png)
 
-There are some things diffent about this microservice. For starters, it does not expose REST API. The only interactions this service has are through Kafka Topics (consuming from two of them, producing to one topic) and the file system (generating bills to the local file system).
+There are some things different about this microservice. For starters, it does not expose REST API. The only interactions this service has are through Kafka Topics (consuming from two of them, producing to one topic) and the file system (generating bills to the local file system).
 
 Open file *app.js*  in directory *lab4-microservice-interaction\billing-engine*. This is the main module in the Billing Engine service. It imports both a *consume* and a *produce* module. The latter is used for publishing *questions* of type *customer* on the *questions-topic*. The former consumes messages from two different topics - as configured in *config.js*: *answers-topic* and *workflow-queue*. 
 

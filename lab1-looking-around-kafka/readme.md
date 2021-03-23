@@ -61,12 +61,7 @@ We can see that there are no topics yet, apart from an internal (__confluent) to
 Now let's create a new topic. For that we again use the **kafka-topics** utility but this time with the `--create` option. We will create a test topic with 6 partitions and replicated 2 times. The `--if-not-exists` option is handy to avoid errors, if a topic already exists. 
 
 ```
-kafka-topics --create \
-			--if-not-exists \
-			--zookeeper zookeeper-1:2181 \
-			--topic test-topic \
-			--partitions 6 \
-			--replication-factor 2
+kafka-topics --create --if-not-exists --zookeeper zookeeper-1:2181 --topic test-topic --partitions 6 --replication-factor 2
 ```
 
 Re-Run the command to list the topics.
@@ -100,8 +95,7 @@ Now let's see the topic in use. The most basic way to test it is through the com
 First let's run the consumer on the topic `test-topic` we have created before
 
 ```
-kafka-console-consumer --bootstrap-server kafka-1:9092,kafka-2:9093 \
-                       --topic test-topic
+kafka-console-consumer --bootstrap-server kafka-1:19092,kafka-2:19093 --topic test-topic
 ```
 After it is started, the consumer just waits for newly produced messages. 
 
@@ -114,8 +108,7 @@ docker exec -ti kafka-1 bash
 Now run the following command to start the producer.   
  
 ```
-kafka-console-producer --broker-list kafka-1:9092,kafka-2:9093 \
-                       --topic test-topic
+kafka-console-producer --broker-list kafka-1:19092,kafka-2:19093 --topic test-topic
 ```
 
 The console producer utility reads from *stdin*, and takes a broker list instead of a zookeeper address. We specify 2 of the 3 brokers of the Streaming Platform.
@@ -134,7 +127,7 @@ On the `>` prompt enter a few messages, execute each single message by hitting t
 You should see the messages being consumed by the consumer in the first terminal window where you started the *kafka-console-consumer*. 
 
 ```
-root@kafka-1:/# kafka-console-consumer --bootstrap-server kafka-1:9092,kafka-2:9093 --topic test-topic
+root@kafka-1:/# kafka-console-consumer --bootstrap-server kafka-1:19092,kafka-2:19093 --topic test-topic
 aaa
 bbb
 ccc
@@ -147,16 +140,12 @@ You may see that they don't arrive in the same order as produced (if you are ent
 You can stop the consumer by hitting **Ctrl-C**. If you want to consume from the beginning of the log, use the `--from-beginning` option.
 
 ```
-kafka-console-consumer --bootstrap-server kafka-1:9092,kafka-2:9093 \
-							--topic test-topic \
-							--from-beginning
+kafka-console-consumer --bootstrap-server kafka-1:19092,kafka-2:19093 -topic test-topic --from-beginning
 ```
 You can also echo a longer message and pipe it into the console producer, as it is reading the next message from the command line:
 
 ```
-echo "This is my first message!" | kafka-console-producer \
-                  --broker-list kafka-1:9092,kafka-2:9093 \
-                  --topic test-topic
+echo "This is my first message!" | kafka-console-producer --broker-list kafka-1:19092,kafka-2:19093 --topic test-topic
 ```
 
 And of course you can send messages inside a bash for loop:
@@ -164,10 +153,7 @@ And of course you can send messages inside a bash for loop:
 ```
 for i in 1 2 3 4 5 6 7 8 9 10
 do
-   echo "This is message $i"| kafka-console-producer \
-                  --broker-list kafka-1:9092,kafka-2:9093 \
-                  --topic test-topic \
-                  --batch-size 1 &
+   echo "This is message $i"| kafka-console-producer --broker-list kafka-1:19092,kafka-2:19093 --topic test-topic --batch-size 1 &
 done 
 ```
 
@@ -182,11 +168,7 @@ A message produced to Kafka always consists of a *key* and a *value*. The *value
 We can check that by re-consuming the messages we have created so far, specifying the option `--from-beginning` together with the option `print.key` and `key.separator` in the console consumer. For that stop the still running consumer (`ctrl+C`)and restart it again using the following command. Note the `from-beginning` switch that instructs the consumer to read all messages on the topic - not just the new ones but including and starting with the full message history. This is one of the distinguishing features that Apache Kafka introduced to the world of messaging: the message queue is long lived instead of very volatile (read once).
 
 ```
-kafka-console-consumer --bootstrap-server kafka-1:9092,kafka-2:9093 \
-							--topic test-topic \
-							--property print.key=true \
-							--property key.separator=, \
-							--from-beginning
+kafka-console-consumer --bootstrap-server kafka-1:19092,kafka-2:19093 --topic test-topic --property print.key=true --property key.separator=, --from-beginning
 ```
 
 We can see that the keys are all `null` because so far we have only created the value part of the messages.
@@ -194,10 +176,7 @@ We can see that the keys are all `null` because so far we have only created the 
 For producing messages also with a key, use the options `parse.key` and `key.separator`. 
 
 ```
-kafka-console-producer --broker-list kafka-1:9092,kafka-2:9093 \
-							--topic test-topic \
-							--property parse.key=true \
-							--property key.separator=,
+kafka-console-producer --broker-list kafka-1:19092,kafka-2:19093 --topic test-topic --property parse.key=true --property key.separator=,
 ```
 
 Enter your messages so that a key and messages are separated by a comma, i.e. `key1,value1`.  Do that for a few messages and check that they are shown in the console consumers as key and value. 
@@ -205,14 +184,14 @@ Enter your messages so that a key and messages are separated by a comma, i.e. `k
 
 ## Using Apache Kafka HQ
 
-[Apache Kafka HQ](https://akhq.io/) is an open source tool for managing a Kafka cluster: a GUI for Apache Kafka® to manage topics, topics data, consumers group, schema registry, connect and more...It has been started as part of the **Kafka platform ** and can be reached on <http://kafka:28042/> (provided you added the IP address to the *hosts* file associated with the host name *kafka*).
+[Apache Kafka HQ](https://akhq.io/) is an open source tool for managing a Kafka cluster: a GUI for Apache Kafka® to manage topics, topics data, consumers group, schema registry, connect and more...It has been started as part of the **Kafka platform ** and can be reached on <http://kafka:28042/> (provided you added the IP address to the *hosts* file associated with the host name *kafka*, and otherwise at http://192.168.188.110:28042/ or http://127.0.0.1:28042/.
 
 The first page in AKHQ shows an overview of the cluster and its nodes. Note: the connection from AKHQ to the Kafka platform is defined in docker-compose.yml, that is where the name for the cluster ("docker-kafka-server") stems from.
 ![AKQH Nodes in Cluster](./images/akhq-nodes-1.png) 
 You can inspect the details for each node - through the looking glass icon or just by clicking on the row for the node. This reveals the configuration settings for the node as well as an overview of the logs managed on the node/by the broker.
 ![AKQH Node Details](./images/akhq-nodes-2.png) 
 
-The Topics page shows the topics currently created on the entire Kafka Cluster. You will see the *test-topic* that you have just created through the Kafka Console utility. If you show all topics, you will also see two internal topics, used by Kafka for housekeeping. The *__consumer_offsets* topic keeps track of the *read offset* for all consumers (or rather: for all consumer groups).
+The Topics page shows the topics currently created on the entire Kafka Cluster. You will see the *test-topic* that you have just created through the Kafka Console utility. If you show all topics, you will also see one or more internal topics, used by Kafka for housekeeping. The *__consumer_offsets* topic keeps track of the *read offset* for all consumers (or rather: for all consumer groups).
 
 ![AKQH Node Details](./images/akhq-topics-1.png) 
 

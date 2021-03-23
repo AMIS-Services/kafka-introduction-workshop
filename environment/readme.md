@@ -65,7 +65,10 @@ Note: before you run docker compose, you need to define an Environment Variable 
 
 On Linux and MacOS this would be something like:
 
-`export PUBLIC_IP=192.168.188.110`
+`export PUBLIC_IP=192.168.188.110` 
+
+and on Windows for example:
+`set PUBLIC_IP=127.0.0.1`
 
 Run this command on the command line in the directory that contains the *docker-compose.yml* file.
 
@@ -80,7 +83,7 @@ When all images have been pulled and Docker Compose indicates that alle configur
 You should now see a list of six new containers running successfully.  
 
 In a browser on the host machine, you can access the Apache HQ GUI to verify success:
-http://192.168.188.110:28042/
+http://192.168.188.110:28042/ (or http://127.0.0.1:28042/ or even http://localhost:28042/)
 
 This URL is composed from the IP of the (VM that contains the) Docker Host and the port to which the AKHQ container port 8080 has been mapped in the *docker-compose.yml* file.
 

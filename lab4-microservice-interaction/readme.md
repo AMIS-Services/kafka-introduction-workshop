@@ -71,6 +71,8 @@ curl POST http://localhost:3007 -H "Content-Type: application/json" -d "{\"custo
 ```
 At this point, no bill is generated yet. No bill is in the process of being generated. The generator is not even available. But the instruction to prepare the bill have been safely persisted on the *workflow-queue*.
 
+![](images/workflowqueue-topic.png)
+
 ## Billing Engine Microservice - Workflow Step Execution Engine
 The Billing Engine microservice will do the work of generating bills. It consumes bill-generation instructions in the form of messages from the workflow-queue, requests some customer details from the CRM Service - albeit in a very decoupled manner - and generates a bill in a local file.
 ![](images/billing-engine.png)

@@ -48,7 +48,7 @@ const billGenerationJobs = {} // key-value map with workflow identifier as key a
 
 const generateCustomerBill = function (customerIdentifier, workflowIdentifier) {
 
-    if (billGenerationJobs[workflowIdentifier]) { //job was already started, let's see if we can finish it now
+    if (billGenerationJobs[workflowIdentifier]!=null) { //job was already started, let's see if we can finish it now
         console.log(`Finish bill generation with full details on customer ${JSON.stringify(billGenerationJobs[workflowIdentifier].customer)}`)
         completeBill(workflowIdentifier)
     }
@@ -68,7 +68,7 @@ const generateCustomerBill = function (customerIdentifier, workflowIdentifier) {
 
 const completeBill = function (workflowIdentifier) {
     const customer = billGenerationJobs[workflowIdentifier].customer
-
+    if (customer == null || customer.lastName == null) return
     const data = 
 `Bill for ${customer.firstName} ${customer.lastName}
 =============================================================================
